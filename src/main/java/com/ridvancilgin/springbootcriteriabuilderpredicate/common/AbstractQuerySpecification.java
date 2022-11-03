@@ -5,6 +5,8 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.*;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -194,7 +196,16 @@ public abstract class AbstractQuerySpecification<T> implements Specification<T> 
 
     protected boolean addDateGreaterThanOrEqualToPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> predicates,
                                                            String fieldName, String fieldPath) {
-        Date value = extractDateValue(fieldName);
+//        Date value = extractDateValue(fieldName);
+
+        Date date = extractDateValue(fieldName);
+        LocalDateTime value;
+        if (date == null) {
+            return false;
+        } else {
+            value = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+
         if (value != null) {
             predicates.add(cb.greaterThanOrEqualTo(root.get(fieldPath), value));
             return true;

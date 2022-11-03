@@ -21,7 +21,7 @@ public class BookSpec extends AbstractQuerySpecification<Book> {
     private String name;
     private String author;
     private BigDecimal price;
-
+    private String startDate;
 
     @Override
     public Predicate toPredicate(Root<Book> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -31,6 +31,9 @@ public class BookSpec extends AbstractQuerySpecification<Book> {
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "name");
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "author");
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "price");
+        addDateGreaterThanOrEqualToPredicate(criteriaBuilder, root, predicates, "startDate", "startDate");
+
+        query.orderBy(criteriaBuilder.desc(root.get("startDate")));
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
     }

@@ -13,8 +13,4 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
 
     List<Book> findAll(Specification<Book> spec);
-
-//    List<Book> findBookByNameAndPrice();
-//
-//    List<Book> findBookByAuthorOrPrice();
 }

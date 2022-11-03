@@ -9,8 +9,6 @@ import com.ridvancilgin.springbootcriteriabuilderpredicate.repository.BookReposi
 import com.ridvancilgin.springbootcriteriabuilderpredicate.repository.specification.BookSpec;
 import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +31,25 @@ public class BookService {
     }
 
     public BookDto createBook(BookDto bookDto) {
-        Book book = bookRepository.save(dozerBeanMapper.map(bookDto, Book.class));
-        return dozerBeanMapper.map(book, BookDto.class);
+        Book book = Book.builder()
+                .id(bookDto.getId())
+                .name(bookDto.getName())
+                .author(bookDto.getAuthor())
+                .price(bookDto.getPrice())
+                .startDate(bookDto.getStartDate())
+                .build();
+
+
+        Book createdBook = bookRepository.save(book);
+
+        return BookDto.builder()
+                .id(createdBook.getId())
+                .name(createdBook.getName())
+                .author(createdBook.getAuthor())
+                .price(createdBook.getPrice())
+                .startDate(createdBook.getStartDate())
+                .build();
+
     }
 
     public BookDto findOneBook(Long id) throws Exception {
@@ -77,6 +92,7 @@ public class BookService {
         bookSpec.setName(request.getName());
         bookSpec.setAuthor(request.getAuthor());
         bookSpec.setPrice(request.getPrice());
+        bookSpec.setStartDate(request.getStartDate().toString());
 
         return bookRepository.findAll(bookSpec);
     }

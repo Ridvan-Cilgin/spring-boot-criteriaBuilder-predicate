@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -57,11 +61,23 @@ public class BookController {
         bookService.deleteBook(id);
     }
 
-//    @GetMapping("/filter/")
-//    public List<Book> filterBooks(@RequestBody BookDto request){
-//Bütün lar request param lar ayrı ayrı yazılabilir
-        @GetMapping("/filter/")
-        public List<Book> filterBooks(BookDto request){
-        return bookService.filterBooks(request);
+    @GetMapping("/filter/")
+    public List<Book> filterBooks(@RequestParam(required = false) Long id,
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(required = false) String author,
+                                  @RequestParam(required = false) String startDate) {
+
+        BookDto bookDto = new BookDto();
+        bookDto.setId(id);
+        bookDto.setName(name);
+        bookDto.setAuthor(author);
+
+        Instant instant = Instant.parse(startDate);
+
+        LocalDateTime result = LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.getId()));
+
+        bookDto.setStartDate(result);
+
+        return bookService.filterBooks(bookDto);
     }
 }
