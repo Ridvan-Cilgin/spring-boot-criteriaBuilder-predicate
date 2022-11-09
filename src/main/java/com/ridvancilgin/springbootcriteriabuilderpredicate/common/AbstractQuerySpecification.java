@@ -120,31 +120,29 @@ public abstract class AbstractQuerySpecification<T> implements Specification<T> 
 
     }
 
-//    @SuppressWarnings({"unchecked", "rawtypes"})
-//    protected Predicate createFieldGTEorNullPredicate(CriteriaBuilder cb, Root<T> root, String fieldName,
-//                                                      String fieldPath) {
-//        Comparable value = (Comparable) extractFieldValue(fieldName, false);
-//        List<Predicate> predicates = new ArrayList<Predicate>();
-//
-//        QueryPath<? extends T> path = new QueryPath<T>(root, fieldPath);
-//        predicates.add(cb.greaterThanOrEqualTo(path.getPath(), value));
-//        predicates.add(cb.isNull(path.getPath()));
-//        return cb.or(predicates.toArray(new Predicate[predicates.size()]));
-//
-//    }
-//
-//    @SuppressWarnings({"unchecked", "rawtypes"})
-//    protected Predicate createFieldLTEorNullPredicate(CriteriaBuilder cb, Root<T> root, String fieldName,
-//                                                      String fieldPath) {
-//        Comparable value = (Comparable) extractFieldValue(fieldName, false);
-//        List<Predicate> predicates = new ArrayList<Predicate>();
-//
-//        QueryPath<? extends T> path = new QueryPath<T>(root, fieldPath);
-//        predicates.add(cb.lessThanOrEqualTo(path.getPath(), value));
-//        predicates.add(cb.isNull(path.getPath()));
-//        return cb.or(predicates.toArray(new Predicate[predicates.size()]));
-//
-//    }
+    protected Predicate createFieldGTEorNullPredicate(CriteriaBuilder cb, Root<T> root, String fieldName,
+                                                      String fieldPath) {
+        Comparable value = (Comparable) extractFieldValue(fieldName, false);
+        List<Predicate> predicates = new ArrayList<>();
+
+        QueryPath<? extends T> path = new QueryPath<>(root, fieldPath);
+        predicates.add(cb.greaterThanOrEqualTo(path.getPath(), value));
+        predicates.add(cb.isNull(path.getPath()));
+        return cb.or(predicates.toArray(new Predicate[predicates.size()]));
+
+    }
+
+    protected Predicate createFieldLTEorNullPredicate(CriteriaBuilder cb, Root<T> root, String fieldName,
+                                                      String fieldPath) {
+        Comparable value = (Comparable) extractFieldValue(fieldName, false);
+        List<Predicate> predicates = new ArrayList<>();
+
+        QueryPath<? extends T> path = new QueryPath<>(root, fieldPath);
+        predicates.add(cb.lessThanOrEqualTo(path.getPath(), value));
+        predicates.add(cb.isNull(path.getPath()));
+        return cb.or(predicates.toArray(new Predicate[predicates.size()]));
+
+    }
 
     protected boolean addFieldEqualsPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> predicates,
                                               String fieldName, String fieldPath) {
@@ -214,6 +212,18 @@ public abstract class AbstractQuerySpecification<T> implements Specification<T> 
         }
     }
 
+    protected boolean addLocalDateTimeGreaterThanOrEqualToPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> predicates,
+                                                                    String fieldName, String fieldPath) {
+        LocalDateTime value = extractLocalDateTimeValue(fieldName);
+
+        if (value != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get(fieldPath), value));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     protected boolean addDateLessThanOrEqualToPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> predicates,
                                                         String fieldName, String fieldPath) {
         Date value = extractDateValue(fieldName);
@@ -274,6 +284,19 @@ public abstract class AbstractQuerySpecification<T> implements Specification<T> 
         if (val != null) {
             try {
                 dateValue = formatter.parse(String.valueOf(val));
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return dateValue;
+    }
+
+    protected LocalDateTime extractLocalDateTimeValue(String fieldName) {
+        Object val = extractFieldValue(fieldName, false);
+        LocalDateTime dateValue = null;
+        if (val != null) {
+            try {
+                dateValue = LocalDateTime.parse(String.valueOf(val));
             } catch (Exception e) {
                 return null;
             }

@@ -80,4 +80,11 @@ public class BookController {
 
         return bookService.filterBooks(bookDto);
     }
+
+    @GetMapping("/dashboard/")
+    public List<Book> dashboardBook() {
+        return bookService.dashboardBook();
+    }
+
+
 }

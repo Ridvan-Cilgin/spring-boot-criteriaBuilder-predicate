@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,7 +93,16 @@ public class BookService {
         bookSpec.setName(request.getName());
         bookSpec.setAuthor(request.getAuthor());
         bookSpec.setPrice(request.getPrice());
-        bookSpec.setStartDate(request.getStartDate().toString());
+//        bookSpec.setStartDate(request.getStartDate().toString());
+
+        return bookRepository.findAll(bookSpec);
+    }
+
+    public List<Book> dashboardBook() {
+        BookSpec bookSpec = new BookSpec();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startedDate = now.minusDays(30);
+        bookSpec.setStartDate(startedDate);
 
         return bookRepository.findAll(bookSpec);
     }

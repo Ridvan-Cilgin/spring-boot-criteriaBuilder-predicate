@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class BookSpec extends AbstractQuerySpecification<Book> {
     private String name;
     private String author;
     private BigDecimal price;
-    private String startDate;
+    private LocalDateTime startDate;
 
     @Override
     public Predicate toPredicate(Root<Book> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -31,10 +32,10 @@ public class BookSpec extends AbstractQuerySpecification<Book> {
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "name");
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "author");
         addFieldEqualsPredicate(criteriaBuilder, root, predicates, "price");
-        addDateGreaterThanOrEqualToPredicate(criteriaBuilder, root, predicates, "startDate", "startDate");
-
+//        addDateGreaterThanOrEqualToPredicate(criteriaBuilder, root, predicates, "startDate", "startDate");
+        addLocalDateTimeGreaterThanOrEqualToPredicate(criteriaBuilder, root, predicates, "startDate", "startDate");
         query.orderBy(criteriaBuilder.desc(root.get("startDate")));
 
-        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 }
